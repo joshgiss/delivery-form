@@ -1,0 +1,638 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Company & Delivery Information</title>
+  <meta name="description" content="Company, contact, and delivery requirements form." />
+  <style>
+    :root{
+      --bg:#f6f7f9;
+      --card:#ffffff;
+      --text:#222831;
+      --muted:#6b7280;
+      --line:#e5e7eb;
+      --field:#f3f4f6;
+      --accent:#1f5eff;
+      --accent-dark:#1749c6;
+      --danger:#c62828;
+      --shadow:0 14px 40px rgba(20, 30, 55, .08);
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(31,94,255,.08), transparent 30%),
+        var(--bg);
+      line-height:1.45;
+    }
+    .shell{max-width:980px;margin:0 auto;padding:44px 20px 72px}
+    .hero{
+      background:linear-gradient(135deg,#111827,#243b70);
+      color:white;
+      border-radius:24px;
+      padding:34px 36px;
+      box-shadow:var(--shadow);
+      margin-bottom:22px;
+    }
+    .hero h1{margin:0 0 8px;font-size:clamp(28px,5vw,44px);letter-spacing:-.03em}
+    .hero p{margin:0;color:rgba(255,255,255,.8);max-width:680px}
+    .progress-wrap{
+      position:sticky;top:0;z-index:20;
+      padding:12px 0 16px;
+      background:linear-gradient(var(--bg) 70%, rgba(246,247,249,0));
+    }
+    .progress-card{
+      background:rgba(255,255,255,.88);
+      backdrop-filter:blur(12px);
+      border:1px solid rgba(229,231,235,.9);
+      border-radius:14px;
+      padding:10px 12px;
+    }
+    .progress-bar{height:8px;background:#e9edf5;border-radius:999px;overflow:hidden}
+    .progress-bar span{display:block;height:100%;width:0;background:linear-gradient(90deg,#1f5eff,#6c8cff);transition:width .2s ease}
+    .progress-label{font-size:12px;color:var(--muted);margin-top:7px;text-align:right}
+    form{display:grid;gap:20px}
+    section{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:28px;
+      box-shadow:var(--shadow);
+    }
+    section h2{margin:0 0 6px;font-size:23px}
+    section .intro{margin:0 0 24px;color:var(--muted);font-size:14px}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+    .full{grid-column:1/-1}
+    .field label,.group-label{display:block;font-weight:650;margin-bottom:8px}
+    .required{color:var(--danger)}
+    input[type="text"],input[type="email"],input[type="tel"],textarea{
+      width:100%;
+      border:1px solid transparent;
+      background:var(--field);
+      border-radius:11px;
+      padding:13px 14px;
+      font:inherit;
+      color:var(--text);
+      outline:none;
+      transition:.15s ease;
+    }
+    textarea{min-height:110px;resize:vertical}
+    input:focus,textarea:focus{
+      border-color:var(--accent);
+      background:white;
+      box-shadow:0 0 0 4px rgba(31,94,255,.11);
+    }
+    .choices{display:grid;gap:10px}
+    .choice{
+      display:flex;align-items:flex-start;gap:10px;
+      padding:12px 13px;border:1px solid var(--line);
+      border-radius:11px;cursor:pointer;
+      transition:.15s ease;background:white;
+    }
+    .choice:hover{border-color:#bcc8e6;background:#fafcff}
+    .choice input{margin-top:3px;accent-color:var(--accent)}
+    .other-input{margin-top:9px;display:none}
+    .other-input.show{display:block}
+    .help{font-size:12px;color:var(--muted);margin-top:6px}
+    .actions{display:flex;justify-content:flex-end;gap:12px;padding-top:4px}
+    button{
+      border:0;border-radius:12px;padding:13px 20px;font:inherit;font-weight:700;cursor:pointer
+    }
+    .primary{background:var(--accent);color:white}
+    .primary:hover{background:var(--accent-dark)}
+    .secondary{background:#e9edf5;color:#263247}
+    .message{
+      display:none;margin-top:18px;padding:15px 16px;border-radius:12px;
+      background:#eaf7ee;color:#225d32;border:1px solid #c7e8d0;
+    }
+    .message.show{display:block}
+    .branch-controls{
+      display:flex;align-items:center;justify-content:space-between;gap:14px;
+      background:var(--card);border:1px dashed #b9c4da;border-radius:var(--radius);
+      padding:20px 22px;box-shadow:var(--shadow);
+    }
+    .branch-controls h2{margin:0;font-size:21px}
+    .branch-controls p{margin:4px 0 0;color:var(--muted);font-size:14px}
+    .branch-actions{display:flex;gap:10px;flex-wrap:wrap}
+    .add-branch{background:#111827;color:#fff}
+    .add-branch:hover{background:#263247}
+    .remove-branch{background:#f4e9e9;color:#8d2020}
+    .branch-block{
+      border-top:4px solid #dbe3f6;
+      padding-top:6px;
+      display:grid;gap:20px;
+    }
+    .branch-heading{
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
+      padding:10px 4px 0;
+    }
+    .branch-heading h2{margin:0;font-size:24px}
+    .error-summary{
+      display:none;margin-bottom:18px;padding:14px 16px;border-radius:12px;
+      background:#fff1f1;color:#8d2020;border:1px solid #f2c7c7;
+    }
+    .error-summary.show{display:block}
+    .google-setup{
+      background:#fff8e8;
+      border:1px solid #efd28a;
+      border-radius:16px;
+      padding:18px 20px;
+      margin-bottom:20px;
+      box-shadow:var(--shadow);
+    }
+    .google-setup h2{margin:0 0 6px;font-size:20px}
+    .google-setup p{margin:0 0 12px;color:#66552c;font-size:14px}
+    .google-setup-row{display:flex;gap:10px;align-items:center}
+    .google-setup input{
+      flex:1;
+      background:white;
+      border:1px solid #d7c48e;
+      border-radius:10px;
+      padding:12px 13px;
+      font:inherit;
+    }
+    .google-setup .save-google-url{background:#111827;color:white;white-space:nowrap}
+    .google-setup-status{margin-top:10px;font-size:13px;color:#2d6a3a}
+    .google-setup.hidden{display:none}
+    footer{text-align:center;color:var(--muted);font-size:12px;margin-top:22px}
+    @media(max-width:720px){
+      .shell{padding:24px 14px 50px}
+      .hero{padding:26px 22px;border-radius:18px}
+      section{padding:22px 18px}
+      .grid{grid-template-columns:1fr}
+      .full{grid-column:auto}
+      .actions{flex-direction:column-reverse}
+      button{width:100%}
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="hero">
+      <h1>Company & Delivery Information</h1>
+      <p>Please provide your company details, key contacts, and delivery/unloading requirements.</p>
+    </header>
+
+    <div class="progress-wrap">
+      <div class="progress-card">
+        <div class="progress-bar"><span id="progress"></span></div>
+        <div class="progress-label" id="progressLabel">0% complete</div>
+      </div>
+    </div>
+
+    <div id="googleSetup" class="google-setup">
+      <h2>Connect Google Sheet</h2>
+      <p>Paste your Google Apps Script <strong>Web app URL</strong> ending in <code>/exec</code>. It will be saved only in this browser.</p>
+      <div class="google-setup-row">
+        <input id="googleScriptUrlInput" type="url" placeholder="https://script.google.com/macros/s/.../exec" />
+        <button type="button" class="save-google-url" id="saveGoogleUrlButton">Save connection</button>
+      </div>
+      <div id="googleSetupStatus" class="google-setup-status"></div>
+    </div>
+
+    <form id="deliveryForm" novalidate>
+      <div id="errorSummary" class="error-summary"></div>
+
+      <section>
+        <h2>Company Information</h2>
+        <p class="intro">Tell us where the business and deliveries are located.</p>
+        <div class="grid">
+          <div class="field full">
+            <label for="companyName">1. Name <span class="required">*</span></label>
+            <input id="companyName" name="companyName" type="text" placeholder="Enter your answer" required />
+          </div>
+          <div class="field full">
+            <label for="branchAddress">2. Branch Address <span class="required">*</span></label>
+            <input id="branchAddress" name="branchAddress" type="text" placeholder="Enter your answer" required />
+          </div>
+          <div class="field full">
+            <label for="deliveryAddress">3. Delivery Address <span class="required">*</span></label>
+            <input id="deliveryAddress" name="deliveryAddress" type="text" placeholder="Enter your answer" required />
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>Primary Contact Details</h2>
+        <p class="intro">Main person we should contact regarding deliveries.</p>
+        <div class="grid">
+          <div class="field">
+            <label for="primaryName">4. Name <span class="required">*</span></label>
+            <input id="primaryName" name="primaryName" type="text" placeholder="Enter your answer" required />
+          </div>
+          <div class="field">
+            <label for="primaryTitle">5. Position / Title <span class="required">*</span></label>
+            <input id="primaryTitle" name="primaryTitle" type="text" placeholder="Enter your answer" required />
+          </div>
+          <div class="field">
+            <label for="primaryPhone">6. Phone Number <span class="required">*</span></label>
+            <input id="primaryPhone" name="primaryPhone" type="tel" placeholder="Enter your answer" required />
+          </div>
+          <div class="field">
+            <label for="primaryEmail">7. Email Address <span class="required">*</span></label>
+            <input id="primaryEmail" name="primaryEmail" type="email" placeholder="Enter your answer" required />
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>Secondary Contact Details</h2>
+        <p class="intro">Backup contact if the primary contact is unavailable.</p>
+        <div class="grid">
+          <div class="field">
+            <label for="secondaryName">8. Name <span class="required">*</span></label>
+            <input id="secondaryName" name="secondaryName" type="text" placeholder="Enter your answer" required />
+          </div>
+          <div class="field">
+            <label for="secondaryTitle">9. Position / Title <span class="required">*</span></label>
+            <input id="secondaryTitle" name="secondaryTitle" type="text" placeholder="Enter your answer" required />
+          </div>
+          <div class="field">
+            <label for="secondaryPhone">10. Phone Number <span class="required">*</span></label>
+            <input id="secondaryPhone" name="secondaryPhone" type="tel" placeholder="Enter your answer" required />
+          </div>
+          <div class="field">
+            <label for="secondaryEmail">11. Email Address <span class="required">*</span></label>
+            <input id="secondaryEmail" name="secondaryEmail" type="email" placeholder="Enter your answer" required />
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>Additional Contact Details</h2>
+        <p class="intro">Optional additional contact.</p>
+        <div class="grid">
+          <div class="field">
+            <label for="additionalName">12. Name</label>
+            <input id="additionalName" name="additionalName" type="text" placeholder="Enter your answer" />
+          </div>
+          <div class="field">
+            <label for="additionalTitle">13. Position / Title</label>
+            <input id="additionalTitle" name="additionalTitle" type="text" placeholder="Enter your answer" />
+          </div>
+          <div class="field">
+            <label for="additionalPhone">14. Phone Number</label>
+            <input id="additionalPhone" name="additionalPhone" type="tel" placeholder="Enter your answer" />
+          </div>
+          <div class="field">
+            <label for="additionalEmail">15. Email Address</label>
+            <input id="additionalEmail" name="additionalEmail" type="email" placeholder="Enter your answer" />
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>Delivery & Unloading Requirements</h2>
+        <p class="intro">Help us plan the right vehicle, timing, and unloading method.</p>
+        <div class="grid">
+          <div class="field">
+            <span class="group-label">16. Required Delivery Notice <span class="required">*</span></span>
+            <div class="choices">
+              <label class="choice"><input type="radio" name="deliveryNotice" value="Same Day" required /> <span>Same Day</span></label>
+              <label class="choice"><input type="radio" name="deliveryNotice" value="24 Hours" /> <span>24 Hours</span></label>
+              <label class="choice"><input type="radio" name="deliveryNotice" value="48 Hours" /> <span>48 Hours</span></label>
+              <label class="choice"><input type="radio" name="deliveryNotice" value="Other" data-other-target="deliveryNoticeOther" /> <span>Other</span></label>
+            </div>
+            <input id="deliveryNoticeOther" class="other-input" name="deliveryNoticeOther" type="text" placeholder="Please specify" />
+          </div>
+
+          <div class="field">
+            <span class="group-label">17. Adequate Space for Truck Entry / Exit <span class="required">*</span></span>
+            <div class="choices">
+              <label class="choice"><input type="radio" name="truckSpace" value="Yes" required /> <span>Yes</span></label>
+              <label class="choice"><input type="radio" name="truckSpace" value="No" /> <span>No</span></label>
+            </div>
+          </div>
+
+          <div class="field">
+            <span class="group-label">18. Booking Before Delivery Required <span class="required">*</span></span>
+            <div class="choices">
+              <label class="choice"><input type="radio" name="bookingRequired" value="Yes" required /> <span>Yes</span></label>
+              <label class="choice"><input type="radio" name="bookingRequired" value="No" /> <span>No</span></label>
+            </div>
+          </div>
+
+          <div class="field">
+            <span class="group-label">19. Truck Type Required <span class="required">*</span></span>
+            <div class="choices">
+              <label class="choice"><input type="checkbox" name="truckType" value="Standard Flatbed" /> <span>Standard Flatbed</span></label>
+              <label class="choice"><input type="checkbox" name="truckType" value="Semi Trailer" /> <span>Semi Trailer</span></label>
+              <label class="choice"><input type="checkbox" name="truckType" value="Other" data-other-target="truckTypeOther" /> <span>Other</span></label>
+            </div>
+            <input id="truckTypeOther" class="other-input" name="truckTypeOther" type="text" placeholder="Please specify" />
+          </div>
+
+          <div class="field full">
+            <span class="group-label">20. Material Unloading Method <span class="required">*</span></span>
+            <div class="choices">
+              <label class="choice"><input type="checkbox" name="unloadingMethod" value="Forklift on Site" /> <span>Forklift on Site</span></label>
+              <label class="choice"><input type="checkbox" name="unloadingMethod" value="Crane on Site" /> <span>Crane on Site</span></label>
+              <label class="choice"><input type="checkbox" name="unloadingMethod" value="Other" data-other-target="unloadingOther" /> <span>Other</span></label>
+            </div>
+            <input id="unloadingOther" class="other-input" name="unloadingOther" type="text" placeholder="Please specify" />
+          </div>
+
+          <div class="field full">
+            <label for="deliveryInstructions">21. Other Delivery Instructions</label>
+            <textarea id="deliveryInstructions" name="deliveryInstructions" placeholder="Enter your answer"></textarea>
+          </div>
+        </div>
+      </section>
+
+      <div id="additionalBranches"></div>
+
+      <div class="branch-controls">
+        <div>
+          <h2>Additional Branches</h2>
+          <p>Add another branch and complete the full set of questions again.</p>
+        </div>
+        <div class="branch-actions">
+          <button class="add-branch" type="button" id="addBranchButton">+ Add branch</button>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="secondary" type="reset">Clear form</button>
+        <button class="primary" type="submit">Submit details</button>
+      </div>
+      <div id="successMessage" class="message">Thanks — the form has been completed successfully.</div>
+    </form>
+
+    <footer>Responses are sent directly to your Google Sheet once the Google Apps Script web app URL is configured.</footer>
+  </main>
+
+  <script>
+    /*
+      GOOGLE SHEETS SETUP
+      -------------------
+      1. Create a Google Sheet and add the Apps Script supplied with this website.
+      2. Deploy the Apps Script as a Web App.
+      3. Paste the /exec Web App URL below.
+    */
+    let GOOGLE_SCRIPT_URL = localStorage.getItem('googleScriptUrl') || '';
+
+    const googleSetup = document.getElementById('googleSetup');
+    const googleScriptUrlInput = document.getElementById('googleScriptUrlInput');
+    const saveGoogleUrlButton = document.getElementById('saveGoogleUrlButton');
+    const googleSetupStatus = document.getElementById('googleSetupStatus');
+
+    function refreshGoogleSetup() {
+      if (GOOGLE_SCRIPT_URL) {
+        googleSetupStatus.textContent = 'Google Sheet connection saved in this browser.';
+        googleScriptUrlInput.value = GOOGLE_SCRIPT_URL;
+      } else {
+        googleSetupStatus.textContent = 'Not connected yet.';
+      }
+    }
+
+    saveGoogleUrlButton.addEventListener('click', () => {
+      const url = googleScriptUrlInput.value.trim();
+      if (!url.startsWith('https://script.google.com/') || !url.includes('/exec')) {
+        googleSetupStatus.textContent = 'Please paste the Web app URL from Apps Script. It should start with https://script.google.com/ and end in /exec.';
+        return;
+      }
+      GOOGLE_SCRIPT_URL = url;
+      localStorage.setItem('googleScriptUrl', url);
+      googleSetupStatus.textContent = 'Connected. You can now submit a test response.';
+    });
+
+    refreshGoogleSetup();
+
+    const form = document.getElementById('deliveryForm');
+    const progress = document.getElementById('progress');
+    const progressLabel = document.getElementById('progressLabel');
+    const successMessage = document.getElementById('successMessage');
+    const errorSummary = document.getElementById('errorSummary');
+    const additionalBranches = document.getElementById('additionalBranches');
+    const addBranchButton = document.getElementById('addBranchButton');
+    const submitButton = form.querySelector('button[type="submit"]');
+    const mainSections = [...form.querySelectorAll(':scope > section')].map(s => s.cloneNode(true));
+    let branchCount = 0;
+
+    function uniqueifyBranch(container, branchNo) {
+      container.querySelectorAll('[id]').forEach(el => { el.id = `branch${branchNo}_${el.id}`; });
+      container.querySelectorAll('label[for]').forEach(label => { label.setAttribute('for', `branch${branchNo}_${label.getAttribute('for')}`); });
+      container.querySelectorAll('input, textarea').forEach(el => {
+        if (el.name) el.name = `branch${branchNo}_${el.name}`;
+        if (el.dataset.otherTarget) el.dataset.otherTarget = `branch${branchNo}_${el.dataset.otherTarget}`;
+        if (el.type === 'checkbox' || el.type === 'radio') {
+          el.checked = false;
+          // Keep the original option value (e.g. "Yes", "24 Hours", "Standard Flatbed").
+        } else {
+          el.value = '';
+        }
+      });
+      container.querySelectorAll('.other-input').forEach(el => { el.classList.remove('show'); el.required = false; });
+    }
+
+    function addBranch() {
+      branchCount += 1;
+      const block = document.createElement('div');
+      block.className = 'branch-block';
+      block.dataset.branchNo = branchCount;
+      const heading = document.createElement('div');
+      heading.className = 'branch-heading';
+      heading.innerHTML = `<h2>Additional Branch ${branchCount}</h2><button type="button" class="remove-branch">Remove branch</button>`;
+      block.appendChild(heading);
+      mainSections.forEach(sectionTemplate => {
+        const section = sectionTemplate.cloneNode(true);
+        uniqueifyBranch(section, branchCount);
+        block.appendChild(section);
+      });
+      block.querySelector('.remove-branch').addEventListener('click', () => { block.remove(); updateProgress(); });
+      additionalBranches.appendChild(block);
+      updateProgress();
+      heading.scrollIntoView({behavior:'smooth', block:'start'});
+    }
+    addBranchButton.addEventListener('click', addBranch);
+
+    function toggleOther(el) {
+      const targetId = el.dataset.otherTarget;
+      if (!targetId) return;
+      const target = document.getElementById(targetId);
+      if (!target) return;
+      if (el.type === 'radio') {
+        const checked = form.querySelector(`input[name="${CSS.escape(el.name)}"]:checked`);
+        const show = checked && checked.dataset.otherTarget === targetId;
+        target.classList.toggle('show', !!show);
+        target.required = !!show;
+        if (!show) target.value = '';
+      } else {
+        target.classList.toggle('show', el.checked);
+        target.required = el.checked;
+        if (!el.checked) target.value = '';
+      }
+    }
+
+    form.addEventListener('change', (e) => {
+      if (e.target.matches('input[type="radio"]')) {
+        form.querySelectorAll(`input[name="${CSS.escape(e.target.name)}"][data-other-target]`).forEach(toggleOther);
+      }
+      if (e.target.matches('input[type="checkbox"][data-other-target]')) toggleOther(e.target);
+      updateProgress();
+    });
+    form.addEventListener('input', updateProgress);
+
+    function requiredGroupNames(scope = form) {
+      const groups = new Set();
+      scope.querySelectorAll('input[required][type="radio"]').forEach(el => groups.add(el.name));
+      return [...groups];
+    }
+    function checkboxGroupNames(scope = form) {
+      const names = [];
+      scope.querySelectorAll('.group-label').forEach(label => {
+        const text = label.textContent || '';
+        if (text.includes('Truck Type Required') || text.includes('Material Unloading Method')) {
+          const first = label.parentElement.querySelector('input[type="checkbox"]');
+          if (first) names.push(first.name);
+        }
+      });
+      return names;
+    }
+    function groupHasValue(name) { return !!form.querySelector(`input[name="${CSS.escape(name)}"]:checked`); }
+    function updateProgress() {
+      const requiredText = [...form.querySelectorAll('input[required]:not([type="radio"]):not([type="checkbox"]), textarea[required]')];
+      const textDone = requiredText.filter(el => el.value.trim() !== '').length;
+      const radioGroups = requiredGroupNames();
+      const radioDone = radioGroups.filter(groupHasValue).length;
+      const checkboxGroups = checkboxGroupNames();
+      const checkboxDone = checkboxGroups.filter(groupHasValue).length;
+      const total = requiredText.length + radioGroups.length + checkboxGroups.length;
+      const done = textDone + radioDone + checkboxDone;
+      const pct = total ? Math.round((done / total) * 100) : 0;
+      progress.style.width = pct + '%';
+      progressLabel.textContent = pct + '% complete';
+    }
+    function validateCheckboxGroups() {
+      const missing = [];
+      form.querySelectorAll('.group-label').forEach(label => {
+        const text = (label.textContent || '').replace('*','').trim();
+        if (text.includes('Truck Type Required') || text.includes('Material Unloading Method')) {
+          const first = label.parentElement.querySelector('input[type="checkbox"]');
+          if (first && !groupHasValue(first.name)) missing.push(text.replace(/^\\d+\\.\\s*/, ''));
+        }
+      });
+      return missing;
+    }
+    function valuesFor(fd, key) { return fd.getAll(key); }
+    function fieldValue(fd, key) { return fd.get(key) || ''; }
+
+    function branchToRecord(fd, prefix, branchLabel, submissionId, submittedAtUtc) {
+      const k = (name) => `${prefix}${name}`;
+      const notice = fieldValue(fd, k('deliveryNotice'));
+      const noticeOther = fieldValue(fd, k('deliveryNoticeOther'));
+      const truckTypes = valuesFor(fd, k('truckType'));
+      const truckOther = fieldValue(fd, k('truckTypeOther'));
+      const unloading = valuesFor(fd, k('unloadingMethod'));
+      const unloadingOther = fieldValue(fd, k('unloadingOther'));
+      return {
+        SubmissionId: submissionId,
+        SubmittedAtUtc: submittedAtUtc,
+        BranchLabel: branchLabel,
+        CompanyName: fieldValue(fd, k('companyName')),
+        BranchAddress: fieldValue(fd, k('branchAddress')),
+        DeliveryAddress: fieldValue(fd, k('deliveryAddress')),
+        PrimaryContactName: fieldValue(fd, k('primaryName')),
+        PrimaryPositionTitle: fieldValue(fd, k('primaryTitle')),
+        PrimaryPhone: fieldValue(fd, k('primaryPhone')),
+        PrimaryEmail: fieldValue(fd, k('primaryEmail')),
+        SecondaryContactName: fieldValue(fd, k('secondaryName')),
+        SecondaryPositionTitle: fieldValue(fd, k('secondaryTitle')),
+        SecondaryPhone: fieldValue(fd, k('secondaryPhone')),
+        SecondaryEmail: fieldValue(fd, k('secondaryEmail')),
+        AdditionalContactName: fieldValue(fd, k('additionalName')),
+        AdditionalPositionTitle: fieldValue(fd, k('additionalTitle')),
+        AdditionalPhone: fieldValue(fd, k('additionalPhone')),
+        AdditionalEmail: fieldValue(fd, k('additionalEmail')),
+        DeliveryNotice: notice === 'Other' ? (noticeOther || 'Other') : notice,
+        AdequateEntryExitSpace: fieldValue(fd, k('truckSpace')),
+        BookingBeforeDeliveryRequired: fieldValue(fd, k('bookingRequired')),
+        TruckTypeRequired: truckTypes.map(v => v === 'Other' ? (truckOther || 'Other') : v).join(', '),
+        UnloadingMethod: unloading.map(v => v === 'Other' ? (unloadingOther || 'Other') : v).join(', '),
+        OtherDeliveryInstructions: fieldValue(fd, k('deliveryInstructions'))
+      };
+    }
+
+    function buildBranchRecords() {
+      const fd = new FormData(form);
+      const submissionId = crypto.randomUUID ? crypto.randomUUID() : `submission-${Date.now()}`;
+      const submittedAtUtc = new Date().toISOString();
+      const records = [branchToRecord(fd, '', 'Main Branch', submissionId, submittedAtUtc)];
+      [...additionalBranches.querySelectorAll('.branch-block')].forEach((block, index) => {
+        const n = block.dataset.branchNo;
+        records.push(branchToRecord(fd, `branch${n}_`, `Additional Branch ${index + 1}`, submissionId, submittedAtUtc));
+      });
+      return records;
+    }
+
+    async function sendToGoogleSheet(records) {
+      if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes('PASTE_YOUR_')) {
+        throw new Error('Google Sheets is not connected yet. Paste your Apps Script Web app URL into the Connect Google Sheet box at the top of this page.');
+      }
+
+      // Apps Script web apps can receive a normal form POST. Using no-cors avoids
+      // browser cross-origin restrictions while still allowing the request to reach Google.
+      const body = new URLSearchParams();
+      body.set('payload', JSON.stringify({ records }));
+
+      await fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: {'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},
+        body: body.toString()
+      });
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      successMessage.classList.remove('show');
+      errorSummary.classList.remove('show');
+      const customErrors = validateCheckboxGroups();
+      const nativeValid = form.checkValidity();
+      if (!nativeValid || customErrors.length) {
+        const missing = customErrors.length ? ` Please also complete: ${[...new Set(customErrors)].join(', ')}.` : '';
+        errorSummary.textContent = 'Please complete all required fields and check email formats.' + missing;
+        errorSummary.classList.add('show');
+        if (!nativeValid) form.reportValidity();
+        errorSummary.scrollIntoView({behavior:'smooth', block:'center'});
+        return;
+      }
+      const originalText = submitButton.textContent;
+      submitButton.disabled = true;
+      submitButton.textContent = 'Sending...';
+      try {
+        const records = buildBranchRecords();
+        await sendToGoogleSheet(records);
+        successMessage.textContent = records.length === 1 ? 'Thanks - your response has been submitted successfully.' : `Thanks - ${records.length} branch responses have been submitted successfully.`;
+        successMessage.classList.add('show');
+        successMessage.scrollIntoView({behavior:'smooth', block:'center'});
+      } catch (err) {
+        console.error(err);
+        errorSummary.textContent = err.message || 'We could not submit the form. Please try again.';
+        errorSummary.classList.add('show');
+        errorSummary.scrollIntoView({behavior:'smooth', block:'center'});
+      } finally {
+        submitButton.disabled = false;
+        submitButton.textContent = originalText;
+      }
+    });
+
+    form.addEventListener('reset', () => {
+      setTimeout(() => {
+        additionalBranches.innerHTML = '';
+        branchCount = 0;
+        document.querySelectorAll('.other-input').forEach(el => el.classList.remove('show'));
+        errorSummary.classList.remove('show');
+        successMessage.classList.remove('show');
+        updateProgress();
+      }, 0);
+    });
+    updateProgress();
+  </script>
+</body>
+</html>
